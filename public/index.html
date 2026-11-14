@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nébula — baixador de mídia</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/>
+        </svg>
+      </div>
+      <span class="name">nébula</span>
+    </header>
+
+    <form id="form" class="form" autocomplete="off">
+      <div class="input-shell">
+        <svg class="link-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        <input id="url" type="text" placeholder="cole o link aqui" spellcheck="false" autofocus>
+        <button type="button" id="clear" class="icon-btn" hidden aria-label="limpar">&#10005;</button>
+        <button type="button" id="paste" class="paste-btn">colar</button>
+      </div>
+      <p class="hint">suporta SoundCloud, YouTube, X/Twitter, TikTok, Instagram e +700 sites</p>
+    </form>
+
+    <div id="status" class="status" hidden>
+      <span class="spinner"></span><span id="status-text">buscando informações…</span>
+    </div>
+
+    <div id="error" class="error" hidden></div>
+
+    <section id="result" class="card" hidden>
+      <div class="meta">
+        <div class="thumb-wrap">
+          <img id="thumb" alt="" hidden>
+          <div id="thumb-fallback" class="thumb-fallback">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="info">
+          <h2 id="title"></h2>
+          <p id="meta-line"></p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="tabs" id="tabs">
+          <button type="button" data-type="audio">áudio</button>
+          <button type="button" data-type="video">vídeo</button>
+        </div>
+
+        <div class="row">
+          <div class="field" id="field-format">
+            <label for="format">formato</label>
+            <select id="format"></select>
+          </div>
+          <div class="field" id="field-quality">
+            <label for="quality">qualidade</label>
+            <select id="quality"></select>
+          </div>
+          <div class="field">
+            <label for="filenameStyle">nome do arquivo</label>
+            <select id="filenameStyle">
+              <option value="pretty">bonito</option>
+              <option value="basic">básico</option>
+              <option value="nerdy">nerd</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="sc-note" class="sc-note" hidden>o SoundCloud distribui no máximo 128 kbps publicamente — o MP3 de 320 kbps é convertido e não ganha qualidade real</p>
+
+        <button type="button" id="download" class="download">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>
+          </svg>
+          baixar
+        </button>
+
+        <div id="progress" class="progress" hidden>
+          <div class="bar"><div id="bar-fill"></div></div>
+          <div class="progress-line"><span id="stage"></span><span id="percent"></span></div>
+        </div>
+
+        <div id="done" class="done" hidden>
+          download iniciado · <button type="button" id="again">baixar novamente</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">os arquivos vão direto do serviço para você · nada fica armazenado</footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
