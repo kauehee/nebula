@@ -7,6 +7,7 @@ import os from 'os';
 import crypto from 'crypto';
 import { spawn, execFile } from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
 import youtubedl from 'youtube-dl-exec';
 import ffmpegPath from 'ffmpeg-static';
 
@@ -15,7 +16,7 @@ const YTDLP = youtubedl.constants.YOUTUBE_DL_PATH;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ROOT = import.meta.dirname;
+const ROOT = fileURLToPath(new URL('.', import.meta.url));
 
 app.use(express.json({ limit: '64kb' }));
 app.use(express.static(path.join(ROOT, 'public')));
