@@ -128,12 +128,42 @@ async function fetchInfo() {
       body: JSON.stringify({ url }),
     });
     const data = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(data.error || 'Erro ao buscar informações.');
+    if (!r.ok) {
+      if (data.bandcamp) {
+        renderBandcampFallback(data);
+        return;
+      }
+      throw new Error(data.error || 'Erro ao buscar informações.');
+    }
     renderResult(data);
   } catch (err) {
     setStatus(false);
     showError(err.message);
   }
+}
+
+function renderBandcampFallback(data) {
+  info = null;
+  setStatus(false);
+  clearError();
+
+  hide(thumbEl);
+  show(thumbFallback);
+  titleEl.textContent = 'Bandcamp';
+  metaLine.textContent = data.error || '';
+
+  bcLink.textContent = 'abrir página original no Bandcamp ↗';
+  bcLink.href = data.webpageUrl || currentUrl;
+  bcLink.target = '_blank';
+  bcLink.rel = 'noopener';
+  show(bcLink);
+  bcNote.hidden = false;
+
+  hide(tabsEl);
+  hide(downloadBtn);
+  hide(progressEl);
+  hide(doneEl);
+  show(resultEl);
 }
 
 function renderResult(data) {

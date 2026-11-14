@@ -121,8 +121,8 @@ function friendlyError(err) {
     return 'Este conteúdo não está disponível (pode ser privado, removido ou bloqueado por região).';
   }
   if (/unsupported url/i.test(text)) return 'URL não suportada.';
-  if (/impersonat|curl_cffi/i.test(text)) {
-    return 'Este site bloqueia servidores de datacenter (ex.: Bandcamp no Render). Abra o link no navegador para baixar direto.';
+  if (/impersonat|curl_cffi|client challenge/i.test(text)) {
+    return 'Este site bloqueia servidores de datacenter. Abra o link original no navegador para baixar direto.';
   }
   if (/geo|copyright|country/i.test(text)) return 'Conteúdo bloqueado na sua região.';
   return tail ? `Erro no download: ${tail.slice(0, 400)}` : 'Falha ao processar o link. Tente novamente.';
@@ -299,6 +299,13 @@ app.post('/api/info', async (req, res) => {
       videoQualities: sc ? [] : VIDEO_QUALITIES,
     });
   } catch (err) {
+    if (isBandcamp(u)) {
+      return res.status(422).json({
+        error: friendlyError(err),
+        bandcamp: true,
+        webpageUrl: u.href,
+      });
+    }
     res.status(422).json({ error: friendlyError(err) });
   }
 });
