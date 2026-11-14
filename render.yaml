@@ -3,7 +3,7 @@ services:
     name: nebula
     runtime: node
     plan: free
-    buildCommand: YOUTUBE_DL_SKIP_PYTHON_CHECK=1 npm install
+    buildCommand: YOUTUBE_DL_SKIP_PYTHON_CHECK=1 npm install && (python3 -m pip install --quiet curl_cffi || true)
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true

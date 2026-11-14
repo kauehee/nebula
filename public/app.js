@@ -10,6 +10,8 @@ const thumbEl = document.getElementById('thumb');
 const thumbFallback = document.getElementById('thumb-fallback');
 const titleEl = document.getElementById('title');
 const metaLine = document.getElementById('meta-line');
+const bcLink = document.getElementById('bc-link');
+const bcNote = document.getElementById('bc-note');
 const tabsEl = document.getElementById('tabs');
 const fieldFormat = document.getElementById('field-format');
 const fieldQuality = document.getElementById('field-quality');
@@ -152,6 +154,20 @@ function renderResult(data) {
   titleEl.textContent = data.title;
   const parts = [data.uploader, fmtDuration(data.duration)].filter(Boolean);
   metaLine.textContent = parts.join(' · ');
+
+  if (data.soundcloud) {
+    const q = encodeURIComponent([data.uploader, data.title].filter(Boolean).join(' '));
+    bcLink.textContent = 'buscar 320/WAV no Bandcamp ↗';
+    bcLink.href = `https://bandcamp.com/search?q=${q}`;
+    show(bcLink);
+  } else if (data.bandcamp) {
+    bcLink.textContent = 'abrir página original no Bandcamp ↗';
+    bcLink.href = data.webpageUrl || currentUrl;
+    show(bcLink);
+  } else {
+    hide(bcLink);
+  }
+  bcNote.hidden = !data.bandcamp;
 
   tabsEl.hidden = data.soundcloud;
   currentType = data.soundcloud ? 'audio' : 'video';

@@ -43,6 +43,10 @@ function isSoundCloud(u) {
   return /(^|\.)soundcloud\.com$/i.test(u.hostname);
 }
 
+function isBandcamp(u) {
+  return /(^|\.)bandcamp\.com$/i.test(u.hostname);
+}
+
 function contentDisposition(name) {
   const fallback = String(name).replace(/[^\x20-\x7e]/g, '_').replace(/"/g, "'");
   return `attachment; filename="${fallback}"; filename*=UTF-8''${encodeURIComponent(name)}`;
@@ -117,6 +121,9 @@ function friendlyError(err) {
     return 'Este conteúdo não está disponível (pode ser privado, removido ou bloqueado por região).';
   }
   if (/unsupported url/i.test(text)) return 'URL não suportada.';
+  if (/impersonat|curl_cffi/i.test(text)) {
+    return 'Este site bloqueia servidores de datacenter (ex.: Bandcamp no Render). Abra o link no navegador para baixar direto.';
+  }
   if (/geo|copyright|country/i.test(text)) return 'Conteúdo bloqueado na sua região.';
   return tail ? `Erro no download: ${tail.slice(0, 400)}` : 'Falha ao processar o link. Tente novamente.';
 }
@@ -287,6 +294,7 @@ app.post('/api/info', async (req, res) => {
       thumbnail: info.thumbnail || info.artwork_url || null,
       webpageUrl: info.webpage_url || u.href,
       soundcloud: sc,
+      bandcamp: isBandcamp(u),
       audioFormats: sc ? ['mp3-320', 'mp3', 'best'] : AUDIO_FORMATS,
       videoQualities: sc ? [] : VIDEO_QUALITIES,
     });

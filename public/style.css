@@ -122,6 +122,16 @@ body {
 }
 #meta-line { color: var(--muted); font-size: 13px; margin-top: 6px; overflow-wrap: anywhere; }
 
+.bc-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.bc-link:hover { text-decoration: underline; }
+
 .controls { margin-top: 18px; }
 
 .tabs {
