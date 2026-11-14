@@ -395,6 +395,21 @@ function cleanupJob(job) {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+// Keep-alive: pinga a própria URL pública para evitar hibernação do Render.
+// Definir KEEPALIVE_URL no painel do Render (ex.: https://seu-app.onrender.com).
+const KEEPALIVE_URL = process.env.KEEPALIVE_URL || '';
+const KEEPALIVE_INTERVAL_MS = Number(process.env.KEEPALIVE_INTERVAL_MS) || 10 * 60 * 1000;
+if (KEEPALIVE_URL) {
+  const ping = () => {
+    fetch(`${KEEPALIVE_URL.replace(/\/$/, '')}/health`)
+      .then((r) => console.log(`keep-alive: ${r.status}`))
+      .catch((e) => console.error('keep-alive falhou:', e.message));
+  };
+  setInterval(ping, KEEPALIVE_INTERVAL_MS);
+  setTimeout(ping, 30 * 1000);
+  console.log(`keep-alive ativo: ${KEEPALIVE_URL} a cada ${KEEPALIVE_INTERVAL_MS / 60000} min`);
+}
+
 app.listen(PORT, () => {
   console.log(`nébula rodando em http://localhost:${PORT}`);
   // mantém o yt-dlp atualizado (falha silenciosa se offline ou sem permissão)
