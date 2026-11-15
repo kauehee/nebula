@@ -44,6 +44,12 @@ function isSoundCloud(u) {
   return /(^|\.)soundcloud\.com$/i.test(u.hostname);
 }
 
+function isYouTube(u) {
+  return /(^|\.)(youtube\.com|youtu\.be)$/i.test(u.hostname);
+}
+
+const YT_PLAYER_ARGS = { extractorArgs: 'youtube:player_client=default,tv_embedded,web_embedded' };
+
 function isBandcamp(u) {
   return /(^|\.)bandcamp\.com$/i.test(u.hostname);
 }
@@ -118,7 +124,13 @@ function friendlyError(err) {
     ? String(err.stderr).split('\n').filter(Boolean).slice(-3).join(' ')
     : '';
   const text = `${err && err.message ? err.message : ''} ${tail}`.toLowerCase();
-  if (/go\+|go plus|subscription|sign in|login|age restricted|premium/i.test(text)) {
+  if (/not a bot|confirm you'?re not/i.test(text)) {
+    return 'O YouTube pediu verificação de login (anti-bot). Baixe esse vídeo pela versão no PC com cookies.txt.';
+  }
+  if (/confirm your age|age restricted|age-restricted/i.test(text)) {
+    return 'Vídeo com restrição de idade: exige login para baixar.';
+  }
+  if (/go\+|go plus|subscription|sign in|login|premium/i.test(text)) {
     return 'Este conteúdo exige assinatura ou login (ex.: faixas Go+ do SoundCloud) e não pode ser baixado.';
   }
   if (/not available|unavailable|removed|private|deleted|forbidden|404/i.test(text)) {
@@ -146,6 +158,7 @@ async function processJob(job) {
       ffmpegLocation: ffmpegPath,
       print: 'after_move:filepath',
       progressTemplate: 'progress:%(progress._percent_str)s',
+      ...(isYouTube(new URL(url)) ? YT_PLAYER_ARGS : {}),
     };
 
     let filenameExt;
@@ -282,6 +295,7 @@ app.post('/api/info', async (req, res) => {
       noWarnings: true,
       noPlaylist: true,
       skipDownload: true,
+      ...(isYouTube(u) ? YT_PLAYER_ARGS : {}),
     }, u.href);
     const info = JSON.parse(stdout);
     if (info.is_live) {
