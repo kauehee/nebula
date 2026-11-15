@@ -17,6 +17,7 @@ const YTDLP = youtubedl.constants.YOUTUBE_DL_PATH;
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
+const COOKIES_FILE = path.join(ROOT, 'cookies.txt');
 
 app.use(express.json({ limit: '64kb' }));
 app.use(express.static(path.join(ROOT, 'public')));
@@ -65,7 +66,10 @@ function buildArgs(flags) {
 
 function runYtDlp(flags, url, { onStdout } = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(YTDLP, [...buildArgs(flags), '--', url], { windowsHide: true });
+    const cookieArgs = fs.existsSync(COOKIES_FILE)
+      ? ['--cookies', COOKIES_FILE]
+      : [];
+    const child = spawn(YTDLP, [...cookieArgs, ...buildArgs(flags), '--', url], { windowsHide: true });
     let stdout = '';
     let stderr = '';
     child.stdout.setEncoding('utf8');
